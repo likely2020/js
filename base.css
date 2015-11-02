@@ -1,0 +1,7 @@
+/*login*/
+*{padding:0;margin:0;}
+.t-login{width:350px;height:250px;border:1px solid #ccc;position:fixed;}
+.t-login h2{height:40px;line-height:40px;text-align:center;font-size:16px;letter-spacing:1px;
+	color:#666;border-bottom:1px solid #ddd;
+}
+.t-login h2 img{float:right;position:relative;top:11px;right:8px;cursor:pointer;}
