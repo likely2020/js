@@ -2,8 +2,8 @@
 <head>
 <meta http-equiv="Content-Type" charset="utf-8">
 <title>base.js</title>
-<script type="text/javascript" src="base.js"></script>
-<link href="base.css" style="text/css" rel="stylesheet" />
+<script type="text/javascript" src="jquery.js"></script>
+<link href="jquery.css" style="text/css" rel="stylesheet" />
 <script type="text/javascript">
 window.onload=function(){
 	// $().getId('box').hover(function(){
@@ -11,11 +11,11 @@ window.onload=function(){
 	// },function(){
 	// 	$(this).css('color','red')
 	// });
-	$().getClass('t-login').center().resize(function(){
-		$().getClass('t-login').center()
+	$('.t-login').center().resize(function(){
+		$('.t-login').center()
 	});
-	$().getClass('t-login-close').click(function(){
-		$().getClass('t-login').remove();
+	$('.t-login-close').click(function(){
+		$('.t-login').remove();
 	})
 };
 </script>

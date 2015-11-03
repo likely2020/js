@@ -1,0 +1,22 @@
+<html>
+<head>
+<title></title>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript">
+	$(function(){
+		//console.log($("#div1").css('background','green'));
+
+		$("div").click(function(){
+			$(this).remove();
+		})
+		console.log($(".red").eq(0).html().trim())
+	});
+</script>
+</head>
+<body>
+<div id="div1">div1</div>
+<div class="red">   1    </div>
+<div class="red">2</div>
+<div class="red">3</div>
+</body>
+</html>
