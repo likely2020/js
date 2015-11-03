@@ -39,7 +39,8 @@ jQuery.prototype.getId=function(id){
 jQuery.prototype.getClass=function(oParent,className){
 	var all=oParent.getElementsByTagName('*');
 	for(var i=0;i<all.length;i++){
-		if(all[i].className==className){
+		console.log(all[i].className);
+		if(all[i].className.match(className)){
 			this.elements.push(all[i]);
 		}
 	}
