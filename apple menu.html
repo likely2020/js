@@ -3,18 +3,24 @@
 <title></title>
 <script type="text/javascript" src="jquery.js"></script>
 <style type="text/css">
-.div1{position:fixed;background:green;width:100px;height:100px;}
+#div1{width:100%;position:absolute;bottom:0;text-align:center;}
+#div1 img{width:100px;}
 </style>
 <script type="text/javascript">
 	$(function(){
 		//console.log($("#div1").css('background','green'));
 
-		$(".div1").center().dragEx();
+		$("img").menu();
 	});
 </script>
 </head>
 <body>
-<div class="div1">div1</div>
-<div class="div1">div2</div>
+<div id='div1'>
+	<img src="1.png" />
+	<img src="1.png" />
+	<img src="1.png" />
+	<img src="1.png" />
+	<img src="1.png" />
+</div>
 </body>
 </html>

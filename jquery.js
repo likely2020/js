@@ -393,6 +393,35 @@ jQuery.prototype.fall=function(speed,interval){//自由落体，待解决
 /****************plugin end*********************/
 /***********************************************/
 /***********************************************/
+/**********trigonometric function start*********/
+jQuery.prototype.menu=function(){//未完成
+	var self=this;
+	document.onmousemove=function(e){
+		var e=e||window.event;
+		for(var i=0;i<self.elements.length;i++){
+			var obj=self.elements[i];
+			var x=obj.offsetLeft+obj.offsetWidth/2;
+			var y=obj.offsetTop+obj.offsetHeight/2+obj.parentNode.offsetTop;
+
+			var b=e.clientX-x;
+			var a=e.clientY-y;
+			var c=Math.sqrt(Math.pow(b,2)+Math.pow(a,2));
+			var scale=1-c/300;
+			if(scale<0.3){
+				scale=0.3;
+			}
+			obj.style.width=scale*200+'px';
+			obj.style.height=scale*200+'px';
+		}
+	}
+
+	return self;
+}
+
+
+/**********trigonometric function end***********/
+/***********************************************/
+/***********************************************/
 /****************extend start*******************/
 $.trim=function(str){
 	return str.replace(/^\s+|\s+$/g,'');
