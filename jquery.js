@@ -160,14 +160,16 @@ jQuery.prototype.removeClass=function(className){
 	return this;
 }
 jQuery.prototype.center=function(){
-	var dom=this.elements[0];
-	var width=dom.clientWidth;
-	var height=dom.clientHeight;
-	var top=(document.body.clientHeight-height)/2;
-	var left=(document.body.clientWidth-width)/2;
-	dom.style.top=top+'px';
-	dom.style.left=left+'px';
-
+	for(var i=0;i<this.elements.length;i++){
+		var obj=this.elements[i];
+		var width=obj.clientWidth;
+		var height=obj.clientHeight;
+		var top=(this.getInner().height-height)/2;
+		var left=(this.getInner().width-width)/2;
+		obj.style.top=top+'px';
+		obj.style.left=left+'px';
+	}
+	
 	return this;
 }
 jQuery.prototype.remove=function(){
@@ -178,6 +180,217 @@ jQuery.prototype.remove=function(){
 	return this;
 }
 /****************function end*******************/
+/***********************************************/
+/***********************************************/
+/****************plugin end*********************/
+jQuery.prototype.getInner=function(){
+	if(typeof window.innerWidth!='undefined'){
+		return{
+			width:window.innerWidth,
+			height:window.innerHeight
+		}
+	}else{
+		return{
+			width:document.documentElement.clientWidth,
+			height:document.documentElement.clientHeight
+		}
+	}
+}
+jQuery.prototype.preDef=function(e){
+	var e=e||window.event;
+	if(typeof e.preventDefault!='undefined'){//W3C
+		e.preventDefault();
+	}else{//IE
+		e.returnValue=false;
+	}
+}
+jQuery.prototype.drag=function(){
+	var self=this;
+	for(var i=0;i<this.elements.length;i++){
+		this.elements[i].onmousedown=function(e){
+			self.preDef(e);//阻止浏览器默认行为
+			var _this=this;
+			var e=e||window.event;
+			var disX=e.clientX-_this.offsetLeft;
+			var disY=e.clientY-_this.offsetTop;
+			if(typeof _this.setCapture!='undefined'){
+				_this.setCapture();//全局捕获
+			}
+			document.onmousemove=function(e){//此处给document绑定事件，是因为鼠标如果移动太快，会脱离当前元素
+				var e=e||window.event;
+				var left=e.clientX-disX;	//e.clientX跟屏幕左距离
+				var top=e.clientY-disY;
+				if(left<0){
+					left=0;
+				}else if(left>self.getInner().width-_this.offsetWidth){
+					left=self.getInner().width-_this.offsetWidth;
+				}
+				if(top<0){
+					top=0;
+				}else if(top>self.getInner().height-_this.offsetHeight){
+					top=self.getInner().height-_this.offsetHeight;
+				}
+				_this.style.left=left+'px';
+				_this.style.top=top+'px';
+			}
+			document.onmouseup=function(){
+				document.onmousemove=null;
+				document.onmouseup=null;
+				if(typeof _this.releaseCapture!='undefined'){
+					_this.releaseCapture();//释放全局捕获
+				}
+			}
+		}
+	}
+
+	return self;
+}
+jQuery.prototype.dragEx=function(){
+	var self=this;
+	function startMove(obj,iSpeedX,iSpeedY){
+		obj.timer=setInterval(function(){
+			iSpeedY+=3;//重力，Y++，加速向下
+			var left=obj.offsetLeft+iSpeedX;
+			var top=obj.offsetTop+iSpeedY;
+			if(left<0){
+				left=0;
+				iSpeedX=-iSpeedX;
+				iSpeedX*=0.75;//速度逐步损失
+			}else if(left>self.getInner().width-obj.offsetWidth){
+				left=self.getInner().width-obj.offsetWidth;
+				iSpeedX=-iSpeedX;
+				iSpeedX*=0.75;
+			}
+			if(top<0){
+				top=0;
+				iSpeedY=-iSpeedY;
+				iSpeedY*=0.75;
+			}else if(top>self.getInner().height-obj.offsetHeight){
+				top=self.getInner().height-obj.offsetHeight;
+				iSpeedY=-iSpeedY;
+				iSpeedY*=0.75;
+				iSpeedX*=0.75;//iSpeedY+=3，重力。底部碰撞概率会增大，增加X损失
+			}
+			obj.style.left=left+'px';
+			obj.style.top=top+'px';
+			//console.log(obj.style.left)
+		},50);
+	}
+	for(var i=0;i<this.elements.length;i++){
+		this.elements[i].onmousedown=function(e){
+			self.preDef(e);//阻止浏览器默认行为
+			var _this=this;
+			clearInterval(_this.timer);
+			var e=e||window.event;
+			var disX=e.clientX-_this.offsetLeft;
+			var disY=e.clientY-_this.offsetTop;
+			var prevX=e.clientX;//初始点
+			var prevY=e.clientY;
+			var iSpeedX=0;
+			var iSpeedY=0;
+			if(typeof _this.setCapture!='undefined'){
+				_this.setCapture();//全局捕获
+			}
+			document.onmousemove=function(e){//此处给document绑定事件，是因为鼠标如果移动太快，会脱离当前元素
+				var e=e||window.event;
+				var left=e.clientX-disX;	//e.clientX跟屏幕左距离
+				var top=e.clientY-disY;
+				iSpeedX=e.clientX-prevX;
+				iSpeedY=e.clientY-prevY;
+				prevX=e.clientX;//保存前一个点
+				prevY=e.clientY;
+
+				if(left<0){
+					left=0;
+				}else if(left>self.getInner().width-_this.offsetWidth){
+					left=self.getInner().width-_this.offsetWidth;
+				}
+				if(top<0){
+					top=0;
+				}else if(top>self.getInner().height-_this.offsetHeight){
+					top=self.getInner().height-_this.offsetHeight;
+				}
+				_this.style.left=left+'px';
+				_this.style.top=top+'px';
+			}
+			document.onmouseup=function(){
+				document.onmousemove=null;
+				document.onmouseup=null;
+				if(typeof _this.releaseCapture!='undefined'){
+					_this.releaseCapture();//释放全局捕获
+				}
+				startMove(_this,iSpeedX,iSpeedY);
+			}
+		}
+	}
+
+	return self;
+}
+jQuery.prototype.run=function(speed,interval){//多元素同时运动待解决
+	if(!speed)speed=10;
+	if(!interval)interval=50;
+	var self=this;
+	obj=this.elements[0];
+	var width=obj.offsetWidth;
+	var height=obj.offsetHeight;
+	var iSpeedX=speed;
+	var iSpeedY=speed;
+	function startMove(){
+		setInterval(function(){
+			var left=obj.offsetLeft+iSpeedX;
+			var top=obj.offsetTop+iSpeedY;
+			if(top>self.getInner().height-height){
+				top=self.getInner().height-height;
+				iSpeedY=-speed;
+			}
+			if(left>self.getInner().width-width){
+				left=self.getInner().width-width;
+				iSpeedX=-speed;
+			}
+			if(top<0){
+				top=0;
+				iSpeedY=speed;
+			}
+			if(left<0){
+				left=0;
+				iSpeedX=speed;
+			}
+			obj.style.left=left+'px';
+			obj.style.top=top+'px';
+		},interval);
+	}
+	startMove();
+
+	return self;
+}
+jQuery.prototype.fall=function(speed,interval){//自由落体，待解决
+	if(!speed)speed=5;
+	if(!interval)interval=30;
+	var self=this;
+	obj=this.elements[0];
+	var timer=null;
+	var iSpeed=0;
+	var width=obj.offsetWidth;
+	var height=obj.offsetHeight;
+	obj.onclick=function(){
+		startMove();
+	};
+	function startMove(){
+		timer=setInterval(function(){
+			iSpeed+=speed;//Y++,向下加速
+			var top=obj.offsetTop+iSpeed;
+			if(top>self.getInner().height-height){
+				top=self.getInner().height-height
+				iSpeed=-iSpeed;
+				iSpeed*=0.75;//速度损失
+			}
+			obj.style.top=top+'px';
+		},interval);
+	}
+
+	return self;
+}
+/****************plugin end*********************/
 /***********************************************/
 /***********************************************/
 /****************extend start*******************/
